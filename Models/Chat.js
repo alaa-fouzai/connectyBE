@@ -3,7 +3,10 @@ const mongoose=require('mongoose');
 
 const ChatSchema = mongoose.Schema(
     {
-        _id: ObjectId,
+        id: {
+            type : String,
+            required : false
+        },
         Name: {
             type : String,
             required : true
@@ -19,13 +22,17 @@ const ChatSchema = mongoose.Schema(
         Script:{
             type : String,
             required : true
+        },
+        Property:{
+            type : String,
+            required : true
         }
         ,
         chatBot: [String]
         ,
         messages: [String]
         ,
-        Users: [String]
+        Users: [Object]
         ,
     }
 );

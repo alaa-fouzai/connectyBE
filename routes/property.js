@@ -6,6 +6,7 @@ const { ObjectId } = require('mongoose');
 const ConfPropertyiguration = require('../Models/Property');
 const Property = require('../Models/Property');
 const Mongoose=require('mongoose');
+const Chat = require('../Models/Chat');
 function verifyPOSTToken(req, res, next) {
     let payload;
     if(req.body.token === 'null') {
@@ -105,35 +106,51 @@ router.get('/GetAll',verifyGETToken,async (req,res) =>
     let user  =await User.findOne({ _id : req.userId  });
     if (user.enabled) {
     try{
-        let p =await Property.find({"Users.admin" : Mongoose.Types.ObjectId(req.userId) } );
-        res.header("Access-Control-Allow-Origin", "*");
-        res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-        res.json({status:"ok" , propertys : p});
-        return ;
-    }catch (err) {
-        res.header("Access-Control-Allow-Headers", "*");
-        res.json({ message:err.message });
-    }
-}
-});
+        let re=[];
+        let M =await Property.find({"Users.admin" : Mongoose.Types.ObjectId(req.userId) } );
+        let p=M;
+        if(p != {}) {
 
-router.post('/CreateNewBot',verifyPOSTToken,async (req,res) =>
-{
-    let user = await User.findOne({ _id : req.userId  }).limit(1);
-    if (user.enabled == 1) {
-    try{
-        let p = await Property.findOne({"_id" : Mongoose.Types.ObjectId(req.body.propertyId) } ).limit(1);
-        console.log(p)
+            p.forEach(async (element,i) => {
+                if (element.Products !== [] ){
+                    element.Products.forEach( async (el,j) => {
+                        if (el.hasOwnProperty('chat')) {
+    
+                            
+
+
+
+
+
+
+
+                            let c = await Chat.find({ "Property" : Mongoose.Types.ObjectId(element._id) });
+
+
+                            console.log(p[i].Products[j].chat)
+                            p[i].Products[j].chat = c[0]
+                            console.log(p);
+                            console.log(JSON.stringify(p))
+                            re.push(p);
+                        }
+                    })
+                }
+                else {
+                    re.push(p); 
+                }
+                
+            });
         res.header("Access-Control-Allow-Origin", "*");
         res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-        res.json({status:"ok" , message: 'State Changed',property : p });
+        
+        res.json({status:"ok" , propertys : re});
+        }
+        
         return ;
     }catch (err) {
         res.header("Access-Control-Allow-Headers", "*");
         res.json({ message:err.message });
     }
-} else {
-    res.json({ status:"err",message:"cannot create bot" });
 }
 });
 

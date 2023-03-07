@@ -3,7 +3,10 @@ const mongoose=require('mongoose');
 
 const PropertySchema = mongoose.Schema(
     {
-        _id: ObjectId,
+        id: {
+            type : String,
+            required : false
+        },
         Name: {
             type : String,
             required : true
