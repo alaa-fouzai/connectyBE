@@ -103,55 +103,56 @@ router.post('/ChangeState',verifyPOSTToken,async (req,res) =>
 });
 router.get('/GetAll',verifyGETToken,async (req,res) =>
 {
-    let user  =await User.findOne({ _id : req.userId  });
+    let user  = await User.findOne({ _id : req.userId  });
     if (user.enabled) {
     try{
-        let re=[];
-        let M =await Property.find({"Users.admin" : Mongoose.Types.ObjectId(req.userId) } );
-        let p=M;
-        if(p != {}) {
+        let property=[];
+        let f =await Property.find({"Users.admin" : Mongoose.Types.ObjectId(req.userId) } ).lean().then(p=>{
+            //console.log(p)
+            
 
-            p.forEach(async (element,i) => {
-                if (element.Products !== [] ){
-                    element.Products.forEach( async (el,j) => {
-                        if (el.hasOwnProperty('chat')) {
+            if(p != {}) {
+            
+                p.forEach( (element,i) => {
+                    
+                    if (element.Products !== [] ){
+                        let chats=[]
+                        element.Products.forEach( async (el,j) => {
+                            if (el.hasOwnProperty('chat')) {
     
-                            
+                                let c = await Chat.findOne({ "Property" : Mongoose.Types.ObjectId(element._id) });
+                                chats.push(c);
+                            }
+                            p[i].Products=[]
+                            p[i].Products.push({"chat" : chats});
+                            //console.log(JSON.stringify(p));
+                        })
+                    }
+                    
+                    
+                });
 
-
-
-
-
-
-
-                            let c = await Chat.find({ "Property" : Mongoose.Types.ObjectId(element._id) });
-
-
-                            console.log(p[i].Products[j].chat)
-                            p[i].Products[j].chat = c[0]
-                            console.log(p);
-                            console.log(JSON.stringify(p))
-                            re.push(p);
-                        }
-                    })
-                }
-                else {
-                    re.push(p); 
-                }
-                
-            });
-        res.header("Access-Control-Allow-Origin", "*");
+                res.header("Access-Control-Allow-Origin", "*");
         res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+        console.log("*************************");
+        res.json({status:"ok" , propertys : p});
+
+            }
+
         
-        res.json({status:"ok" , propertys : re});
-        }
         
-        return ;
+        
+        });
+        //console.log(p)
+        //console.log("-----------------------------------")
+        
+        
     }catch (err) {
         res.header("Access-Control-Allow-Headers", "*");
         res.json({ message:err.message });
     }
 }
 });
+
 
 module.exports = router;

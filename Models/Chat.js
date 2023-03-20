@@ -23,6 +23,10 @@ const ChatSchema = mongoose.Schema(
             type : String,
             required : true
         },
+        state : {
+            type :Boolean,
+            default:true
+        },
         Property:{
             type : String,
             required : true
