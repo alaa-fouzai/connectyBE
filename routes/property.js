@@ -112,7 +112,7 @@ router.get('/GetAlls',verifyGETToken,async (req,res) =>
             
 
             if(p != {}) {
-            
+                
                 p.forEach( (element,i) => {
                     
                     if (element.Products !== [] ){
@@ -151,14 +151,42 @@ router.get('/GetAll',verifyGETToken,async (req,res) =>
     if (user.enabled) {
     try{
         let property=[];
+        let f =await Property.find({"Users.admin" : Mongoose.Types.ObjectId(req.userId) } ).lean()
+        
+        for(let i=0; i < f.length; i ++) {
+            //product
+            if (f[i].Products !== [] ){
+                let chats=[]
+                
+                for(let j=0;j< f[i].Products.length;j++){
+                    
+                    if (f[i].Products[j].hasOwnProperty('chat')) {
+                        //console.log(f[i].Products[j].chat)
+                        let c = await Chat.findOne({ _id : Mongoose.Types.ObjectId(f[i].Products[j].chat) });
+                        if (c) {
+                            //console.log(c)
+                            let pr = {}
+                            pr.Created_date = c.Created_date;
+                            pr.state = c.state;
+                            pr.chatBot = c.chatBot;
+                            pr.Users = c.Users;
+                            pr._id = c._id;
+                            pr.Name = c.Name;
+                            pr.Style = c.Style;
+                            pr.Script = c.Script;
+                            chats.push(pr);
+                            f[i].Products[j].chat = pr; 
+                        }
+                    }
+                    
+                }
+            }
+        }
+        res.header("Access-Control-Allow-Origin", "*");
+        res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+        console.log("*************************");
+        res.json({status:"ok" , propertys : f});
 
-        let f = await getPropertys(req.userId).then(async (f) => {
-            console.log(" step 1");
-        })
-        property = await getChats(f).then(async (s)=> {
-            console.log("step 2")
-        });
-       console.log("step 3")
         
     }catch (err) {
         res.header("Access-Control-Allow-Headers", "*");
@@ -166,72 +194,6 @@ router.get('/GetAll',verifyGETToken,async (req,res) =>
     }
 }
 });
- async function getPropertys(id) {
-    let f =await Property.find({"Users.admin" : Mongoose.Types.ObjectId(id) } ).lean();
-    /* {
-            _id: 6407bdd152341d6248dfff37,
-            Created_date: 2023-03-07T22:42:14.883Z,
-            state: true,
-            Users: [ [Object] ],
-            Products: [],
-            Name: 'tchat',
-            __v: 0
-        } */
-    return new Promise(function(resolve, reject) {
-        //console.log(f);
-        resolve(f) // successfully fill promise
-    })
-}
-async function getChats(p) {
-    let property=[];
-    p.forEach((item) => {
-        //console.log(item)
-        let x ={}
-        x._id = item._id;
-        x.Created_date = item.Created_date;
-        x.state = item.state;
-        x.Users = item.Users;
-        x.Name = item.Name;
-        //console.log(item.Products.length);
-        //console.log(typeof(item.Products))
-        if ( item.Products.length > 0 ) {
-            //console.log("typeof(item.Products)")
-            item.Products.forEach(async (p) => {
-                if (p.hasOwnProperty('chat')){
-                    let c = await getChat(p.chat)
-                    x.Products = [];
-                    x.Products.push(c);
-                }
-            })
-        }else{
-            x.Products = [];
-        }
-        property.push(x);
-    });
-    return new Promise(function(resolve, reject) {
-        //console.log(f);
-        resolve(property) // successfully fill promise
-    })
-}
-async function getChat(p) {
-    let c = await Chat.findOne({ _id : Mongoose.Types.ObjectId(p) });
-                    console.log(c);
-                    let pr = {}
-                    
-                    pr.Created_date = c.Created_date;
-                    pr.state = c.state;
-                    pr.chatBot = c.chatBot;
-                    pr.Users = c.Users;
-                    pr._id = c._id;
-                    pr.Name = c.Name;
-                    pr.Style = c.Style;
-                    pr.Script = c.Script;
-    return new Promise(function(resolve, reject) {
-        console.log("pr");
-        console.log(pr);
-        resolve(pr) // successfully fill promise
-    })
-}
 /*
                     {
                         Created_date: 2023-03-07T22:05:04.129Z,
