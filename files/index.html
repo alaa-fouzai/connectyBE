@@ -1,12 +1,17 @@
 <html>
     <head>
-        <script src="chatScript.js"></script>
+        <script>
+            function addConnectyScript(id) {
+                var script=document.createElement('script');
+                script.setAttribute('type','text/javascript');
+                script.setAttribute('src','chatScript.js');
+                document.getElementsByTagName('head')[0].appendChild(script);
+            }
+            addConnectyScript('6407b51877ee6e67b47a83d8');
+        </script>
 
     </head>
     <body>
 
-
-
     </body>
-    
 </html>

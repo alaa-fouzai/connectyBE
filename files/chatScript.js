@@ -13,7 +13,7 @@ let chatbody ='<div class="chat-screen">\n'+
 '                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#bc32ef" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>\n'+
 '                        Send Transcriptions\n'+
 '                    </a>\n'+
-'                    <a class="dropdown-item end-chat" href="javascript:void(0);">\n'+
+'                    <a id="end-chat-connecty" class="dropdown-item end-chat" href="javascript:void(0);">\n'+
 '                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#bc32ef" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-power"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path><line x1="12" y1="2" x2="12" y2="12"></line></svg>\n'+
 '                        End Chat\n'+
 '                    </a>\n'+
@@ -30,15 +30,15 @@ let chatbody ='<div class="chat-screen">\n'+
 '        <div class="row">\n'+
 '            <div class="col-md-12">\n'+
 '                <div class="form-group">\n'+
-'                    <input type="text" class="form-control" placeholder="Name">\n'+
+'                    <input type="text" id="connecty-name" class="form-control" placeholder="Name">\n'+
 '                </div>\n'+
 '            </div>\n'+
 '            <div class="col-md-12">\n'+
 '                <div class="form-group">\n'+
-'                    <input type="email" class="form-control" placeholder="Email">\n'+
+'                    <input type="email" id="connecty-email" class="form-control" placeholder="Email">\n'+
 '                </div>\n'+
 '            </div>\n'+
-'            <div class="col-md-12">\n'+
+'            <div class="col-md-12 hide" >\n'+
 '                    <select class="form-control  select2_el">\n'+
 '                        <option selected="selected">Select Option</option>\n'+
 '                        <option>Report Abuse</option>\n'+
@@ -74,7 +74,7 @@ let chatbody ='<div class="chat-screen">\n'+
 '        <input type="text" placeholder="Type a message...">\n'+
 '        <div class="input-action-icon">\n'+
 '            <a><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-paperclip"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg></a>\n'+
-'            <a><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-send"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg></a>\n'+
+'            <a id="connecty-send-Message"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-send"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg></a>\n'+
 '        </div>\n'+
 '    </div>\n'+
 '    <div class="chat-session-end hide">\n'+
@@ -90,6 +90,9 @@ let chatbody ='<div class="chat-screen">\n'+
 '                Bad\n'+
 '            </div>\n'+
 '        </div>\n'+
+'            <div class="col-md-12">\n'+
+'                <button id="restart-chat-mail-button-connecty" class="btn btn-primary btn-rounded btn-block">Re-Start Chat</button>\n'+
+'            </div>\n'+
 '        <a class="transcript-chat">Need a Transcript?</a>\n'+
 '        <div class="powered-by">Powered by css3transition</div>\n'+
 '    </div>\n'+
@@ -153,17 +156,16 @@ let chatbody ='<div class="chat-screen">\n'+
 window.addEventListener('load', function () {
     function includeJs(jsFilePath) {
         var js = document.createElement("script");
-    
         js.type = "text/javascript";
         js.src = jsFilePath;
-    
         document.body.appendChild(js);
     }
 includeJs("http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js");
 includeJs("https://ajax.cloudflare.com/cdn-cgi/scripts/7089c43e/cloudflare-static/rocket-loader.min.js");
+
 includeJs("js/popper.min.js");
 
-includeJs("js/select2.min.js");
+//includeJs("js/select2.min.js");
 
 const div1 = document.createElement('div');
 div1.innerHTML = chatbody;
@@ -171,18 +173,57 @@ document.body.appendChild(div1);
 document.getElementsByTagName("head")[0].insertAdjacentHTML(
     "beforeend",
     "<link rel=\"stylesheet\" href=\"chatstyle.css\" />");
+//click on chatbot
 this.document.getElementsByClassName("chat-bot-icon")[0].onclick = function(){
     document.getElementsByClassName('chat-bot-icon')[0].getElementsByTagName('img')[0].classList.toggle('hide');
     document.getElementsByClassName('chat-bot-icon')[0].getElementsByTagName('svg')[0].classList.toggle('animate');
     document.getElementsByClassName('chat-bot-icon')[0].getElementsByTagName('svg')[1].classList.toggle('animate');
     document.getElementsByClassName('chat-screen')[0].classList.toggle('show-chat');
 }
+//click start conversation
+
 this.document.getElementById("chat-mail-button-connecty").onclick = function(){
+    let name = document.getElementById("connecty-name").value;
+    let email =document.getElementById("connecty-email").value;
+    if (name && email) {
+    localStorage.setItem("connecty-name", name);
+    localStorage.setItem("connecty-email", email);
     document.getElementsByClassName('chat-mail')[0].classList.add('hide');
     document.getElementsByClassName('chat-body')[0].classList.remove('hide');
     document.getElementsByClassName('chat-input')[0].classList.remove('hide');
     document.getElementsByClassName('chat-header-option')[0].classList.remove('hide');
+    } else {
+        alert("please fill in name and email");
+    }
 }
+//click end chat
+this.document.getElementById("end-chat-connecty").onclick = function(){
+    document.getElementsByClassName('chat-body')[0].classList.add('hide');
+    document.getElementsByClassName('chat-input')[0].classList.add('hide');
+    document.getElementsByClassName('chat-session-end')[0].classList.remove('hide');
+    document.getElementsByClassName('chat-header-option')[0].classList.add('hide');
+}
+//click re-start conversation
+this.document.getElementById("restart-chat-mail-button-connecty").onclick = function(){
+    document.getElementsByClassName('chat-mail')[0].classList.add('hide');
+    document.getElementsByClassName('chat-body')[0].classList.remove('hide');
+    document.getElementsByClassName('chat-input')[0].classList.remove('hide');
+    document.getElementsByClassName('chat-header-option')[0].classList.remove('hide');
 
+    document.getElementsByClassName('chat-session-end')[0].classList.add('hide');
+    document.getElementsByClassName('chat-header-option')[0].classList.remove('hide');
+}
+//send message
+this.document.getElementById("connecty-send-Message").onclick = function(){
+    let message = document.getElementById("connecty-send-Message").value;
+    console.log(message);
+    if (message) {
+
+    }else {
+        alert("no message");
+    }
+    
+
+}
 
 })
