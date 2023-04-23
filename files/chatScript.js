@@ -71,7 +71,7 @@ let chatbody ='<div class="chat-screen">\n'+
 '        </div>\n'+
 '    </div>\n'+
 '    <div class="chat-input hide">\n'+
-'        <input type="text" placeholder="Type a message...">\n'+
+'        <input type="text" placeholder="Type a message..." id="connecty-chat-Message">\n'+
 '        <div class="input-action-icon">\n'+
 '            <a><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-paperclip"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg></a>\n'+
 '            <a id="connecty-send-Message"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-send"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg></a>\n'+
@@ -154,25 +154,48 @@ let chatbody ='<div class="chat-screen">\n'+
 '    </div>\n'+
 '</div>';
 window.addEventListener('load', function () {
-    function includeJs(jsFilePath) {
-        var js = document.createElement("script");
-        js.type = "text/javascript";
-        js.src = jsFilePath;
-        document.body.appendChild(js);
+let script = document.createElement('script')
+script.setAttribute('src', "http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js")
+document.getElementsByTagName("head")[0].appendChild(script)
+let rocket = document.createElement('script')
+rocket.setAttribute('src', "https://ajax.cloudflare.com/cdn-cgi/scripts/7089c43e/cloudflare-static/rocket-loader.min.js")
+document.getElementsByTagName("head")[0].appendChild(rocket)
+let socket = document.createElement('script')
+socket.setAttribute('src', "https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.6.1/socket.io.js")
+document.getElementsByTagName("head")[0].appendChild(socket)
+socket.onload = () => {
+    alert('socket loaded')
+    var socket = io('http://localhost:4000');
+      socket.on('news', function (data) {
+        console.log(data);
+        socket.emit('my other event', { my: 'data' });
+    });
+    //send message
+    this.document.getElementById("connecty-send-Message").onclick = function(){
+        let message = document.getElementById("connecty-chat-Message").value;
+        console.log(message);
+        if (message) {
+            socket.emit('myevent', { data : message });
+        }else {
+            alert("no message");
+        }
+        
     }
-includeJs("http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js");
-includeJs("https://ajax.cloudflare.com/cdn-cgi/scripts/7089c43e/cloudflare-static/rocket-loader.min.js");
-
-includeJs("js/popper.min.js");
+}
+let popper = document.createElement('script')
+popper.setAttribute('src', "js/popper.min.js")
+document.getElementsByTagName("head")[0].appendChild(popper)
 
 //includeJs("js/select2.min.js");
-
-const div1 = document.createElement('div');
-div1.innerHTML = chatbody;
-document.body.appendChild(div1);
 document.getElementsByTagName("head")[0].insertAdjacentHTML(
     "beforeend",
     "<link rel=\"stylesheet\" href=\"chatstyle.css\" />");
+const div1 = document.createElement('div');
+
+
+div1.innerHTML = chatbody;
+document.body.appendChild(div1);
+
 //click on chatbot
 this.document.getElementsByClassName("chat-bot-icon")[0].onclick = function(){
     document.getElementsByClassName('chat-bot-icon')[0].getElementsByTagName('img')[0].classList.toggle('hide');
@@ -213,17 +236,7 @@ this.document.getElementById("restart-chat-mail-button-connecty").onclick = func
     document.getElementsByClassName('chat-session-end')[0].classList.add('hide');
     document.getElementsByClassName('chat-header-option')[0].classList.remove('hide');
 }
-//send message
-this.document.getElementById("connecty-send-Message").onclick = function(){
-    let message = document.getElementById("connecty-send-Message").value;
-    console.log(message);
-    if (message) {
 
-    }else {
-        alert("no message");
-    }
-    
 
-}
 
 })

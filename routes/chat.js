@@ -94,7 +94,28 @@ router.get('/getChat',verifyGETToken,async(req,res)=>{
     res.json({status:"ok" , message: 'chat',user : user,Property : p , Chat : c });
     return ;
 });
-
+router.post('/ChangeState',verifyPOSTToken,async (req,res) =>
+{
+    let user = await User.findOne({ _id : req.userId  }).limit(1);
+    if (user.enabled == 1) {
+    try{
+        let c = await Chat.findOne({"_id" : Mongoose.Types.ObjectId(req.body.id) } ).limit(1);
+        console.log(c)
+        c.state = (c.state === true ) ? c.state = false : c.state = true ;
+        console.log(c);
+        await c.save();
+        res.header("Access-Control-Allow-Origin", "*");
+        res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+        res.json({status:"ok" , message: 'State Changed',chat : c });
+        return ;
+    }catch (err) {
+        res.header("Access-Control-Allow-Headers", "*");
+        res.json({ message:err.message });
+    }
+} else {
+    res.json({ status:"err",message:"problem" });
+}
+});
 
 
 
