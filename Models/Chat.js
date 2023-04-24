@@ -34,7 +34,7 @@ const ChatSchema = mongoose.Schema(
         ,
         chatBot: [String]
         ,
-        messages: [String]
+        messages: [Object]
         ,
         Users: [Object]
         ,

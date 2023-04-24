@@ -163,19 +163,19 @@ document.getElementsByTagName("head")[0].appendChild(rocket)
 let socket = document.createElement('script')
 socket.setAttribute('src', "https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.6.1/socket.io.js")
 document.getElementsByTagName("head")[0].appendChild(socket)
+console.log(document.getElementById("connectyChatScript").getAttribute("chat"));
 socket.onload = () => {
     alert('socket loaded')
     var socket = io('http://localhost:4000');
-      socket.on('news', function (data) {
-        console.log(data);
-        socket.emit('my other event', { my: 'data' });
-    });
-    //send message
+    let chatID=document.getElementById("connectyChatScript").getAttribute("chat")
+    socket.emit('create', chatID);
+    let name = localStorage.getItem("connecty-name");
+    let email = localStorage.getItem("connecty-email");
     this.document.getElementById("connecty-send-Message").onclick = function(){
         let message = document.getElementById("connecty-chat-Message").value;
         console.log(message);
         if (message) {
-            socket.emit('myevent', { data : message });
+            socket.emit('clientEmit', { chatID : chatID , message : message  , email : email,name : name } );
         }else {
             alert("no message");
         }
@@ -207,7 +207,7 @@ this.document.getElementsByClassName("chat-bot-icon")[0].onclick = function(){
 
 this.document.getElementById("chat-mail-button-connecty").onclick = function(){
     let name = document.getElementById("connecty-name").value;
-    let email =document.getElementById("connecty-email").value;
+    let email = document.getElementById("connecty-email").value;
     if (name && email) {
     localStorage.setItem("connecty-name", name);
     localStorage.setItem("connecty-email", email);
