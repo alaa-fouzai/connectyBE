@@ -169,10 +169,11 @@ socket.onload = () => {
     var socket = io('http://localhost:4000');
     let chatID=document.getElementById("connectyChatScript").getAttribute("chat")
     socket.emit('create', chatID);
-    let name = localStorage.getItem("connecty-name");
-    let email = localStorage.getItem("connecty-email");
+    
     this.document.getElementById("connecty-send-Message").onclick = function(){
         let message = document.getElementById("connecty-chat-Message").value;
+        let name = localStorage.getItem("connecty-name");
+        let email = localStorage.getItem("connecty-email");
         console.log(message);
         if (message) {
             socket.emit('clientEmit', { chatID : chatID , message : message  , email : email,name : name } );
