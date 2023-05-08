@@ -36,8 +36,6 @@ router.post('/register',async (req,res) =>
     }
 
 });
-
-
 router.get('/users',async (req , res)=>{
     try{
         const user=await User.find().limit(5);

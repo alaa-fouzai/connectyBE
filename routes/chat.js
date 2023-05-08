@@ -94,6 +94,16 @@ router.get('/getChat',verifyGETToken,async(req,res)=>{
     res.json({status:"ok" , message: 'chat',user : user,Property : p , Chat : c });
     return ;
 });
+router.get('/getSingleChat',verifyGETToken,async(req,res)=>{
+    console.log(req.userId);
+    console.log(req.ChatBotId);
+    let user = await User.findOne({ _id : req.userId  }).limit(1);
+    let c = await Chat.find({ "Users.admin" : Mongoose.Types.ObjectId(req.userId),"_id" :Mongoose.Types.ObjectId(req.query.ChatBotId) });
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    res.json({status:"ok" , message: 'chat',user : user , Chat : c[0] });
+    return ;
+});
 router.post('/ChangeState',verifyPOSTToken,async (req,res) =>
 {
     let user = await User.findOne({ _id : req.userId  }).limit(1);

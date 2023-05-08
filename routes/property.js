@@ -85,9 +85,7 @@ router.post('/ChangeState',verifyPOSTToken,async (req,res) =>
     if (user.enabled == 1) {
     try{
         let p = await Property.findOne({"_id" : Mongoose.Types.ObjectId(req.body.id) } ).limit(1);
-        console.log(p)
         p.state = (p.state === true ) ? p.state = false : p.state = true ;
-        console.log(p);
         await p.save();
         res.header("Access-Control-Allow-Origin", "*");
         res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
@@ -194,18 +192,4 @@ router.get('/GetAll',verifyGETToken,async (req,res) =>
     }
 }
 });
-/*
-                    {
-                        Created_date: 2023-03-07T22:05:04.129Z,
-                        state: true,
-                        chatBot: [],
-                        messages: [],
-                        Users: [ { admin: 63f9fd6ec58ecd3304639e83 } ],
-                        _id: 6407b51877ee6e67b47a83d8,
-                        Name: 'azeaze',
-                        Style: 'files/chatstyle.css',
-                        Script: 'chatScript.js',
-                        Property: '64039b84dc9a8636105bc86f',
-                        __v: 0
-                        }*/
 module.exports = router;

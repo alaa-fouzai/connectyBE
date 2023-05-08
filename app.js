@@ -18,7 +18,8 @@ module.exports = io;
 const UserRouter = require('./routes/Users');
 const DashboardRouter = require('./routes/dashboard');
 const PropertyRouter = require('./routes/property');
-const ChatRouter = require('./routes/Chat');
+const ChatRouter = require('./routes/chat');
+const ConversationRouter = require('./routes/conversation');
 
 
 
@@ -26,6 +27,7 @@ app.use('/api/users',UserRouter);
 app.use('/api/dashboard',DashboardRouter);
 app.use('/api/property',PropertyRouter);
 app.use('/api/chat',ChatRouter);
+app.use('/api/conversation',ConversationRouter);
 
 
 app.get('/',(req,res)=>{

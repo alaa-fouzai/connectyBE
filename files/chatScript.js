@@ -165,7 +165,6 @@ socket.setAttribute('src', "https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.6
 document.getElementsByTagName("head")[0].appendChild(socket)
 console.log(document.getElementById("connectyChatScript").getAttribute("chat"));
 socket.onload = () => {
-    alert('socket loaded')
     var socket = io('http://localhost:4000');
     let chatID=document.getElementById("connectyChatScript").getAttribute("chat")
     socket.emit('create', chatID);
@@ -180,8 +179,11 @@ socket.onload = () => {
         }else {
             alert("no message");
         }
-        
     }
+    socket.on("AdminMessage", (args) => {
+        console.log(args);
+        console.log("args");
+      });
 }
 let popper = document.createElement('script')
 popper.setAttribute('src', "js/popper.min.js")
