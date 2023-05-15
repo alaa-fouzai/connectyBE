@@ -167,8 +167,18 @@ console.log(document.getElementById("connectyChatScript").getAttribute("chat"));
 socket.onload = () => {
     var socket = io('http://localhost:4000');
     let chatID=document.getElementById("connectyChatScript").getAttribute("chat")
-    socket.emit('create', chatID);
-    
+    socket.emit('create', {type:"client",email:localStorage.getItem("connecty-email"),name:localStorage.getItem("connecty-name")});
+    socket.on("connect_error", (err) => {
+        console.log(`connect_error due to ${err.message}`);
+      });
+    socket.on("AdminMessage", (args) => {
+        console.log("AdminMessage");
+        console.log(args);
+        
+      });
+    socket.onAny((eventName, ...args) => {
+    console.log(eventName)
+    });
     this.document.getElementById("connecty-send-Message").onclick = function(){
         let message = document.getElementById("connecty-chat-Message").value;
         let name = localStorage.getItem("connecty-name");
@@ -180,10 +190,7 @@ socket.onload = () => {
             alert("no message");
         }
     }
-    socket.on("AdminMessage", (args) => {
-        console.log(args);
-        console.log("args");
-      });
+    
 }
 let popper = document.createElement('script')
 popper.setAttribute('src', "js/popper.min.js")
