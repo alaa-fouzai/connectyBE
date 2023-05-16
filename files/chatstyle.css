@@ -1166,6 +1166,8 @@ select.form-control.form-custom {
     min-height: 382px;
     max-height: 382px;
     background: #fbfbfb;
+    overflow-x: auto;
+    flex-direction: column-reverse;
 }
 .chat-screen .chat-body .chat-start {
     border: 1px solid #f8d4ff;

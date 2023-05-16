@@ -53,7 +53,7 @@ let chatbody ='<div class="chat-screen">\n'+
 '           </div>\n'+
 '        </div>\n'+
 '    </div>\n'+
-'    <div class="chat-body hide">\n'+
+'    <div id="connecty-chat-body" class="chat-body hide">\n'+
 '        <div class="chat-start">Monday, 1:27 PM</div>\n'+
 '        <div class="chat-bubble you">Welcome to our site, if you need help simply reply to this message, we are online and ready to help.</div>\n'+
 '        <div class="chat-bubble me">Hi, I am back</div>\n'+
@@ -165,32 +165,7 @@ socket.setAttribute('src', "https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.6
 document.getElementsByTagName("head")[0].appendChild(socket)
 console.log(document.getElementById("connectyChatScript").getAttribute("chat"));
 socket.onload = () => {
-    var socket = io('http://localhost:4000');
-    let chatID=document.getElementById("connectyChatScript").getAttribute("chat")
-    socket.emit('create', {type:"client",email:localStorage.getItem("connecty-email"),name:localStorage.getItem("connecty-name")});
-    socket.on("connect_error", (err) => {
-        console.log(`connect_error due to ${err.message}`);
-      });
-    socket.on("AdminMessage", (args) => {
-        console.log("AdminMessage");
-        console.log(args);
-        
-      });
-    socket.onAny((eventName, ...args) => {
-    console.log(eventName)
-    });
-    this.document.getElementById("connecty-send-Message").onclick = function(){
-        let message = document.getElementById("connecty-chat-Message").value;
-        let name = localStorage.getItem("connecty-name");
-        let email = localStorage.getItem("connecty-email");
-        console.log(message);
-        if (message) {
-            socket.emit('clientEmit', { chatID : chatID , message : message  , email : email,name : name } );
-        }else {
-            alert("no message");
-        }
-    }
-    
+    console.log("socket ready");
 }
 let popper = document.createElement('script')
 popper.setAttribute('src', "js/popper.min.js")
@@ -214,21 +189,69 @@ this.document.getElementsByClassName("chat-bot-icon")[0].onclick = function(){
     document.getElementsByClassName('chat-screen')[0].classList.toggle('show-chat');
 }
 //click start conversation
-
+let sendButton = this.document.getElementById("connecty-send-Message");
 this.document.getElementById("chat-mail-button-connecty").onclick = function(){
-    let name = document.getElementById("connecty-name").value;
+    let name = document.getElementById("connecty-name").value ;
     let email = document.getElementById("connecty-email").value;
     if (name && email) {
+    console.log("texts");
     localStorage.setItem("connecty-name", name);
     localStorage.setItem("connecty-email", email);
     document.getElementsByClassName('chat-mail')[0].classList.add('hide');
     document.getElementsByClassName('chat-body')[0].classList.remove('hide');
     document.getElementsByClassName('chat-input')[0].classList.remove('hide');
     document.getElementsByClassName('chat-header-option')[0].classList.remove('hide');
+    //connect to socket
+    var socket = io('http://localhost:4000');
+    let chatID=document.getElementById("connectyChatScript").getAttribute("chat")
+    socket.emit('create', {type:"client",chatId:chatID,email:localStorage.getItem("connecty-email"),name:localStorage.getItem("connecty-name")});
+    socket.on("connect_error", (err) => {
+        console.log(`connect_error due to ${err.message}`);
+      });
+    socket.on("AdminMessage", (args) => {
+        console.log("AdminMessage");
+        console.log(args);
+        let AdminBubble= document.createElement('div');
+        AdminBubble.classList.add("chat-bubble")
+        AdminBubble.classList.add("you")
+        AdminBubble.innerText=args;
+        document.getElementById("connecty-chat-body").appendChild(AdminBubble);
+        var element = document.getElementById("connecty-chat-body");
+        element.scrollTop = element.scrollHeight;
+      });
+    socket.onAny((eventName, ...args) => {
+    console.log(eventName)
+    });
+    
+    sendButton.onclick = function(){
+        console.log("emit message");
+        let chatID=document.getElementById("connectyChatScript").getAttribute("chat")
+        let message = document.getElementById("connecty-chat-Message").value;
+        let name = localStorage.getItem("connecty-name");
+        let email = localStorage.getItem("connecty-email");
+        
+        if (message) {
+            console.log("emit on",chatID);
+            socket.emit('clientEmit', { chatID : chatID , message : message  , email : email,name : name } );
+            let AdminBubble= document.createElement('div');
+            AdminBubble.classList.add("chat-bubble")
+            AdminBubble.classList.add("me");
+            AdminBubble.innerText=message;
+            document.getElementById("connecty-chat-body").appendChild(AdminBubble);
+            var element = document.getElementById("connecty-chat-body");
+            element.scrollTop = element.scrollHeight;
+            document.getElementById("connecty-chat-Message").value="";
+        }else {
+            alert("no message");
+        }
+    }
     } else {
         alert("please fill in name and email");
     }
+    //end connect to socket
 }
+
+
 //click end chat
 this.document.getElementById("end-chat-connecty").onclick = function(){
     document.getElementsByClassName('chat-body')[0].classList.add('hide');
