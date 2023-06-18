@@ -106,7 +106,7 @@ router.post('/GetConversationsById',verifyPOSTToken,async(req,res)=>{
         let x = c.texts[i];
         if(c.texts[i].seen === false) {
             c.texts[i].seen = true;
-            x.seenTime= new Date();
+            x.seenTime= Math.floor(Date.now() / 1000);
         }
         t.push(x) 
     }

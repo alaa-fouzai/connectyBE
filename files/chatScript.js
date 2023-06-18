@@ -160,6 +160,9 @@ document.getElementsByTagName("head")[0].appendChild(script)
 let rocket = document.createElement('script')
 rocket.setAttribute('src', "https://ajax.cloudflare.com/cdn-cgi/scripts/7089c43e/cloudflare-static/rocket-loader.min.js")
 document.getElementsByTagName("head")[0].appendChild(rocket)
+let popper = document.createElement('script')
+popper.setAttribute('src', "js/popper.min.js")
+document.getElementsByTagName("head")[0].appendChild(popper)
 let socket = document.createElement('script')
 socket.setAttribute('src', "https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.6.1/socket.io.js")
 document.getElementsByTagName("head")[0].appendChild(socket)
@@ -173,7 +176,7 @@ socket.onload = () => {
       });
     socket.on("AdminMessage", (args) => {
         console.log("AdminMessage");
-        console.log(args);
+        addAdminMessage(args)
         
       });
     socket.onAny((eventName, ...args) => {
@@ -192,9 +195,7 @@ socket.onload = () => {
     }
     
 }
-let popper = document.createElement('script')
-popper.setAttribute('src', "js/popper.min.js")
-document.getElementsByTagName("head")[0].appendChild(popper)
+
 
 //includeJs("js/select2.min.js");
 document.getElementsByTagName("head")[0].insertAdjacentHTML(
@@ -208,14 +209,33 @@ document.body.appendChild(div1);
 
 //click on chatbot
 this.document.getElementsByClassName("chat-bot-icon")[0].onclick = function(){
-    document.getElementsByClassName('chat-bot-icon')[0].getElementsByTagName('img')[0].classList.toggle('hide');
-    document.getElementsByClassName('chat-bot-icon')[0].getElementsByTagName('svg')[0].classList.toggle('animate');
-    document.getElementsByClassName('chat-bot-icon')[0].getElementsByTagName('svg')[1].classList.toggle('animate');
-    document.getElementsByClassName('chat-screen')[0].classList.toggle('show-chat');
-}
-//click start conversation
 
-this.document.getElementById("chat-mail-button-connecty").onclick = function(){
+        if (localStorage.getItem("connecty-name") && localStorage.getItem("connecty-email")) {
+            document.getElementsByClassName('chat-bot-icon')[0].getElementsByTagName('img')[0].classList.toggle('hide');
+            document.getElementsByClassName('chat-bot-icon')[0].getElementsByTagName('svg')[0].classList.toggle('animate');
+            document.getElementsByClassName('chat-bot-icon')[0].getElementsByTagName('svg')[1].classList.toggle('animate');
+            document.getElementsByClassName('chat-screen')[0].classList.toggle('show-chat');
+            document.getElementsByClassName('chat-mail')[0].classList.add('hide');
+            document.getElementsByClassName('chat-body')[0].classList.remove('hide');
+            document.getElementsByClassName('chat-input')[0].classList.remove('hide');
+            document.getElementsByClassName('chat-header-option')[0].classList.remove('hide');
+
+            document.getElementsByClassName('chat-session-end')[0].classList.add('hide');
+            document.getElementsByClassName('chat-header-option')[0].classList.remove('hide');
+        } else {
+
+            document.getElementsByClassName('chat-bot-icon')[0].getElementsByTagName('img')[0].classList.toggle('hide');
+            document.getElementsByClassName('chat-bot-icon')[0].getElementsByTagName('svg')[0].classList.toggle('animate');
+            document.getElementsByClassName('chat-bot-icon')[0].getElementsByTagName('svg')[1].classList.toggle('animate');
+            document.getElementsByClassName('chat-screen')[0].classList.toggle('show-chat');
+    }
+}
+
+
+
+//click start conversation
+this.document.getElementById("chat-mail-button-connecty").onclick = function() {
+
     let name = document.getElementById("connecty-name").value;
     let email = document.getElementById("connecty-email").value;
     if (name && email) {
@@ -231,6 +251,7 @@ this.document.getElementById("chat-mail-button-connecty").onclick = function(){
 }
 //click end chat
 this.document.getElementById("end-chat-connecty").onclick = function(){
+
     document.getElementsByClassName('chat-body')[0].classList.add('hide');
     document.getElementsByClassName('chat-input')[0].classList.add('hide');
     document.getElementsByClassName('chat-session-end')[0].classList.remove('hide');
@@ -238,6 +259,7 @@ this.document.getElementById("end-chat-connecty").onclick = function(){
 }
 //click re-start conversation
 this.document.getElementById("restart-chat-mail-button-connecty").onclick = function(){
+
     document.getElementsByClassName('chat-mail')[0].classList.add('hide');
     document.getElementsByClassName('chat-body')[0].classList.remove('hide');
     document.getElementsByClassName('chat-input')[0].classList.remove('hide');
@@ -250,3 +272,6 @@ this.document.getElementById("restart-chat-mail-button-connecty").onclick = func
 
 
 })
+function addAdminMessage(message) {
+console.log(message);
+}
