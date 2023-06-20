@@ -1,7 +1,7 @@
 let chatbody ='<div class="chat-screen">\n'+
 '    <div class="chat-header">\n'+
 '        <div class="chat-header-title">\n'+
-'            Let’s chat? - We’re online\n'+
+'            Let\'s chat? - We\'re online\n'+
 '        </div>\n'+
 '        <div class="chat-header-option hide">\n'+
 '            <span class="dropdown custom-dropdown">\n'+
@@ -53,13 +53,10 @@ let chatbody ='<div class="chat-screen">\n'+
 '           </div>\n'+
 '        </div>\n'+
 '    </div>\n'+
-'    <div class="chat-body hide">\n'+
+'    <div id="chat-body" class="chat-body hide">\n'+
 '        <div class="chat-start">Monday, 1:27 PM</div>\n'+
 '        <div class="chat-bubble you">Welcome to our site, if you need help simply reply to this message, we are online and ready to help.</div>\n'+
-'        <div class="chat-bubble me">Hi, I am back</div>\n'+
-'        <div class="chat-bubble me">I just want my Report Status.</div>\n'+
-'        <div class="chat-bubble me">As i am not getting any weekly reports nowadays.</div>\n'+
-'        <div class="chat-bubble you">\n'+
+'        <div class="chat-bubble you hide">\n'+
 '            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="margin: auto;display: block;shape-rendering: auto;width: 43px;height: 20px;" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid">\n'+
 '                <circle cx="0" cy="44.1678" r="15" fill="#ffffff">\n'+
 '                    <animate attributeName="cy" calcMode="spline" keySplines="0 0.5 0.5 1;0.5 0 1 0.5;0.5 0.5 0.5 0.5" repeatCount="indefinite" values="57.5;42.5;57.5;57.5" keyTimes="0;0.3;0.6;1" dur="1s" begin="-0.6s"></animate>\n'+
@@ -179,9 +176,6 @@ socket.onload = () => {
         addAdminMessage(args)
         
       });
-    socket.onAny((eventName, ...args) => {
-    console.log(eventName)
-    });
     this.document.getElementById("connecty-send-Message").onclick = function(){
         let message = document.getElementById("connecty-chat-Message").value;
         let name = localStorage.getItem("connecty-name");
@@ -189,6 +183,7 @@ socket.onload = () => {
         console.log(message);
         if (message) {
             socket.emit('clientEmit', { chatID : chatID , message : message  , email : email,name : name } );
+            ClientMessage(message);
         }else {
             alert("no message");
         }
@@ -273,5 +268,45 @@ this.document.getElementById("restart-chat-mail-button-connecty").onclick = func
 
 })
 function addAdminMessage(message) {
-console.log(message);
+    console.log(message.message.length * 10)
+
+    loading = document.createElement('div');
+    loading.classList.add("chat-bubble");
+    loading.classList.add("you");
+    loading.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="margin: auto;display: block;shape-rendering: auto;width: 43px;height: 20px;" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid">\n'+
+        '                <circle cx="0" cy="44.1678" r="15" fill="#ffffff">\n'+
+        '                    <animate attributeName="cy" calcMode="spline" keySplines="0 0.5 0.5 1;0.5 0 1 0.5;0.5 0.5 0.5 0.5" repeatCount="indefinite" values="57.5;42.5;57.5;57.5" keyTimes="0;0.3;0.6;1" dur="1s" begin="-0.6s"></animate>\n'+
+        '                </circle> <circle cx="45" cy="43.0965" r="15" fill="#ffffff">\n'+
+        '                <animate attributeName="cy" calcMode="spline" keySplines="0 0.5 0.5 1;0.5 0 1 0.5;0.5 0.5 0.5 0.5" repeatCount="indefinite" values="57.5;42.5;57.5;57.5" keyTimes="0;0.3;0.6;1" dur="1s" begin="-0.39999999999999997s"></animate>\n'+
+        '            </circle> <circle cx="90" cy="52.0442" r="15" fill="#ffffff">\n'+
+        '                <animate attributeName="cy" calcMode="spline" keySplines="0 0.5 0.5 1;0.5 0 1 0.5;0.5 0.5 0.5 0.5" repeatCount="indefinite" values="57.5;42.5;57.5;57.5" keyTimes="0;0.3;0.6;1" dur="1s" begin="-0.19999999999999998s"></animate>\n'+
+        '            </circle></svg>\n'
+    
+    document.getElementById("chat-body").appendChild(loading);
+    setTimeout(function(){
+        document.getElementById("chat-body").removeChild(loading);
+        var newMessage = document.createElement("div");
+        newMessage.innerText=message.message;
+        newMessage.classList.add("chat-bubble");
+        newMessage.classList.add("you");
+        newMessage.classList.add("fixNewMessages");
+        document.getElementById("chat-body").appendChild(newMessage);  
+
+
+        
+    }, message.message.length * 10); 
+    
+
+
+    
+}
+function ClientMessage(message) {
+
+    var newMessage = document.createElement("div");
+    newMessage.innerText=message;
+    newMessage.classList.add("chat-bubble");
+    newMessage.classList.add("me");
+    newMessage.classList.add("fixNewMessages");
+    document.getElementById("chat-body").appendChild(newMessage);  
+    document.getElementById("connecty-chat-Message").value="";
 }
