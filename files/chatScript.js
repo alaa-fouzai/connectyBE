@@ -1,7 +1,7 @@
 let chatbody ='<div class="chat-screen">\n'+
 '    <div class="chat-header">\n'+
 '        <div class="chat-header-title">\n'+
-'            Let’s chat? - We’re online\n'+
+'            Let\'s chat? - We\'re online\n'+
 '        </div>\n'+
 '        <div class="chat-header-option hide">\n'+
 '            <span class="dropdown custom-dropdown">\n'+
@@ -53,13 +53,10 @@ let chatbody ='<div class="chat-screen">\n'+
 '           </div>\n'+
 '        </div>\n'+
 '    </div>\n'+
-'    <div id="connecty-chat-body" class="chat-body hide">\n'+
+'    <div id="chat-body" class="chat-body hide">\n'+
 '        <div class="chat-start">Monday, 1:27 PM</div>\n'+
 '        <div class="chat-bubble you">Welcome to our site, if you need help simply reply to this message, we are online and ready to help.</div>\n'+
-'        <div class="chat-bubble me">Hi, I am back</div>\n'+
-'        <div class="chat-bubble me">I just want my Report Status.</div>\n'+
-'        <div class="chat-bubble me">As i am not getting any weekly reports nowadays.</div>\n'+
-'        <div class="chat-bubble you">\n'+
+'        <div class="chat-bubble you hide">\n'+
 '            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="margin: auto;display: block;shape-rendering: auto;width: 43px;height: 20px;" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid">\n'+
 '                <circle cx="0" cy="44.1678" r="15" fill="#ffffff">\n'+
 '                    <animate attributeName="cy" calcMode="spline" keySplines="0 0.5 0.5 1;0.5 0 1 0.5;0.5 0.5 0.5 0.5" repeatCount="indefinite" values="57.5;42.5;57.5;57.5" keyTimes="0;0.3;0.6;1" dur="1s" begin="-0.6s"></animate>\n'+
@@ -160,16 +157,40 @@ document.getElementsByTagName("head")[0].appendChild(script)
 let rocket = document.createElement('script')
 rocket.setAttribute('src', "https://ajax.cloudflare.com/cdn-cgi/scripts/7089c43e/cloudflare-static/rocket-loader.min.js")
 document.getElementsByTagName("head")[0].appendChild(rocket)
+let popper = document.createElement('script')
+popper.setAttribute('src', "js/popper.min.js")
+document.getElementsByTagName("head")[0].appendChild(popper)
 let socket = document.createElement('script')
 socket.setAttribute('src', "https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.6.1/socket.io.js")
 document.getElementsByTagName("head")[0].appendChild(socket)
 console.log(document.getElementById("connectyChatScript").getAttribute("chat"));
 socket.onload = () => {
-    console.log("socket ready");
+    var socket = io('http://localhost:4000');
+    let chatID=document.getElementById("connectyChatScript").getAttribute("chat")
+    socket.emit('create', {type:"client",email:localStorage.getItem("connecty-email"),name:localStorage.getItem("connecty-name")});
+    socket.on("connect_error", (err) => {
+        console.log(`connect_error due to ${err.message}`);
+      });
+    socket.on("AdminMessage", (args) => {
+        console.log("AdminMessage");
+        addAdminMessage(args)
+        
+      });
+    this.document.getElementById("connecty-send-Message").onclick = function(){
+        let message = document.getElementById("connecty-chat-Message").value;
+        let name = localStorage.getItem("connecty-name");
+        let email = localStorage.getItem("connecty-email");
+        console.log(message);
+        if (message) {
+            socket.emit('clientEmit', { chatID : chatID , message : message  , email : email,name : name } );
+            ClientMessage(message);
+        }else {
+            alert("no message");
+        }
+    }
+    
 }
-let popper = document.createElement('script')
-popper.setAttribute('src', "js/popper.min.js")
-document.getElementsByTagName("head")[0].appendChild(popper)
+
 
 //includeJs("js/select2.min.js");
 document.getElementsByTagName("head")[0].insertAdjacentHTML(
@@ -183,15 +204,34 @@ document.body.appendChild(div1);
 
 //click on chatbot
 this.document.getElementsByClassName("chat-bot-icon")[0].onclick = function(){
-    document.getElementsByClassName('chat-bot-icon')[0].getElementsByTagName('img')[0].classList.toggle('hide');
-    document.getElementsByClassName('chat-bot-icon')[0].getElementsByTagName('svg')[0].classList.toggle('animate');
-    document.getElementsByClassName('chat-bot-icon')[0].getElementsByTagName('svg')[1].classList.toggle('animate');
-    document.getElementsByClassName('chat-screen')[0].classList.toggle('show-chat');
+
+        if (localStorage.getItem("connecty-name") && localStorage.getItem("connecty-email")) {
+            document.getElementsByClassName('chat-bot-icon')[0].getElementsByTagName('img')[0].classList.toggle('hide');
+            document.getElementsByClassName('chat-bot-icon')[0].getElementsByTagName('svg')[0].classList.toggle('animate');
+            document.getElementsByClassName('chat-bot-icon')[0].getElementsByTagName('svg')[1].classList.toggle('animate');
+            document.getElementsByClassName('chat-screen')[0].classList.toggle('show-chat');
+            document.getElementsByClassName('chat-mail')[0].classList.add('hide');
+            document.getElementsByClassName('chat-body')[0].classList.remove('hide');
+            document.getElementsByClassName('chat-input')[0].classList.remove('hide');
+            document.getElementsByClassName('chat-header-option')[0].classList.remove('hide');
+
+            document.getElementsByClassName('chat-session-end')[0].classList.add('hide');
+            document.getElementsByClassName('chat-header-option')[0].classList.remove('hide');
+        } else {
+
+            document.getElementsByClassName('chat-bot-icon')[0].getElementsByTagName('img')[0].classList.toggle('hide');
+            document.getElementsByClassName('chat-bot-icon')[0].getElementsByTagName('svg')[0].classList.toggle('animate');
+            document.getElementsByClassName('chat-bot-icon')[0].getElementsByTagName('svg')[1].classList.toggle('animate');
+            document.getElementsByClassName('chat-screen')[0].classList.toggle('show-chat');
+    }
 }
+
+
+
 //click start conversation
-let sendButton = this.document.getElementById("connecty-send-Message");
-this.document.getElementById("chat-mail-button-connecty").onclick = function(){
-    let name = document.getElementById("connecty-name").value ;
+this.document.getElementById("chat-mail-button-connecty").onclick = function() {
+
+    let name = document.getElementById("connecty-name").value;
     let email = document.getElementById("connecty-email").value;
     if (name && email) {
     console.log("texts");
@@ -254,6 +294,7 @@ this.document.getElementById("chat-mail-button-connecty").onclick = function(){
 
 //click end chat
 this.document.getElementById("end-chat-connecty").onclick = function(){
+
     document.getElementsByClassName('chat-body')[0].classList.add('hide');
     document.getElementsByClassName('chat-input')[0].classList.add('hide');
     document.getElementsByClassName('chat-session-end')[0].classList.remove('hide');
@@ -261,6 +302,7 @@ this.document.getElementById("end-chat-connecty").onclick = function(){
 }
 //click re-start conversation
 this.document.getElementById("restart-chat-mail-button-connecty").onclick = function(){
+
     document.getElementsByClassName('chat-mail')[0].classList.add('hide');
     document.getElementsByClassName('chat-body')[0].classList.remove('hide');
     document.getElementsByClassName('chat-input')[0].classList.remove('hide');
@@ -273,3 +315,51 @@ this.document.getElementById("restart-chat-mail-button-connecty").onclick = func
 
 
 })
+function addAdminMessage(message) {
+    console.log(message.message.length * 10)
+    console.log("message")
+    console.log(message)
+
+    loading = document.createElement('div');
+    loading.classList.add("chat-bubble");
+    loading.classList.add("you");
+    loading.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="margin: auto;display: block;shape-rendering: auto;width: 43px;height: 20px;" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid">\n'+
+        '                <circle cx="0" cy="44.1678" r="15" fill="#ffffff">\n'+
+        '                    <animate attributeName="cy" calcMode="spline" keySplines="0 0.5 0.5 1;0.5 0 1 0.5;0.5 0.5 0.5 0.5" repeatCount="indefinite" values="57.5;42.5;57.5;57.5" keyTimes="0;0.3;0.6;1" dur="1s" begin="-0.6s"></animate>\n'+
+        '                </circle> <circle cx="45" cy="43.0965" r="15" fill="#ffffff">\n'+
+        '                <animate attributeName="cy" calcMode="spline" keySplines="0 0.5 0.5 1;0.5 0 1 0.5;0.5 0.5 0.5 0.5" repeatCount="indefinite" values="57.5;42.5;57.5;57.5" keyTimes="0;0.3;0.6;1" dur="1s" begin="-0.39999999999999997s"></animate>\n'+
+        '            </circle> <circle cx="90" cy="52.0442" r="15" fill="#ffffff">\n'+
+        '                <animate attributeName="cy" calcMode="spline" keySplines="0 0.5 0.5 1;0.5 0 1 0.5;0.5 0.5 0.5 0.5" repeatCount="indefinite" values="57.5;42.5;57.5;57.5" keyTimes="0;0.3;0.6;1" dur="1s" begin="-0.19999999999999998s"></animate>\n'+
+        '            </circle></svg>\n'  
+    document.getElementById("chat-body").appendChild(loading);
+    setTimeout(function(){
+        document.getElementById("chat-body").removeChild(loading);
+        var newMessage = document.createElement("div");
+        newMessage.innerText=message.message;
+        newMessage.setAttribute('id',message.time);
+        newMessage.classList.add("chat-bubble");
+        newMessage.classList.add("you");
+        newMessage.classList.add("fixNewMessages");
+        document.getElementById("chat-body").appendChild(newMessage);  
+        setTimeout(function(){
+            console.log("chat-body")
+            document.getElementById(''+message.time).scrollIntoView({behavior: "smooth"})
+        },100)
+
+        
+    }, message.message.length * 10); 
+    
+
+
+    
+}
+function ClientMessage(message) {
+
+    var newMessage = document.createElement("div");
+    newMessage.innerText=message;
+    newMessage.classList.add("chat-bubble");
+    newMessage.classList.add("me");
+    newMessage.classList.add("fixNewMessages");
+    document.getElementById("chat-body").appendChild(newMessage);  
+    document.getElementById("connecty-chat-Message").value="";
+}

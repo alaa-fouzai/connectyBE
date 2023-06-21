@@ -1162,12 +1162,12 @@ select.form-control.form-custom {
 }
 .chat-screen .chat-body {
     padding: 25px;
-    display: inline-block;
+    display: block;
     min-height: 382px;
     max-height: 382px;
     background: #fbfbfb;
-    overflow-x: auto;
-    flex-direction: column-reverse;
+    overflow-y: scroll;
+    overflow-x: hidden;
 }
 .chat-screen .chat-body .chat-start {
     border: 1px solid #f8d4ff;
@@ -1195,11 +1195,12 @@ select.form-control.form-custom {
     border-radius: 0 15px 15px 15px;
     align-self: flex-start;
     display: table;
+    
 }
 .chat-screen .chat-body .chat-bubble.me {
     background-image: linear-gradient(to right, #FFFFFF, #FFFFFF, #FFFFFF, #FFFFFF, #FFFFFF);
     color: #888ea8;
-    border-radius: 15px 0px 15px 15px;
+    border-radius: 15px 15px 0px 15px;
     float: right;
     align-self: flex-end;
     display: table;
@@ -2107,6 +2108,14 @@ span.select2.select2-container.select2-container--default.select2-container--ope
     box-shadow: 0 5px 10px rgba(103, 58, 183, 0.1);
     color: #ffffff;
 }
+.fixNewMessages{
+    word-break: break-word;
+    width : "90%";
+}
+.dropdown-menu-right{
+    display: none!important;
+}
+.dropdown-menu-right:hover {display: block!important;}
 @media (max-width: 767px) {
     .timeline > .timeline-item {
         flex-direction: column;
@@ -2139,3 +2148,41 @@ span.select2.select2-container.select2-container--default.select2-container--ope
         right: inherit;
     }
 }
+
+
+
+
+.dropbtn {
+    background-color: #04AA6D;
+    color: white;
+    padding: 16px;
+    font-size: 16px;
+    border: none;
+  }
+  
+  .dropdown {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f1f1f1;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+  }
+  
+  .dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+  }
+
+  .dropdown-content a:hover {background-color: #ddd;}
+
+.dropdown:hover .dropdown-content {display: block;}
+
+.dropdown:hover .dropbtn {background-color: #3e8e41;}
